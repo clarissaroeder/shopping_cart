@@ -1,6 +1,15 @@
 export interface Product {
   _id: string,
   title: string, 
-  quantity: number,
   price: number,
+  quantity: number,
+  createdAt?: string,
+  updatedAt?: string,
+  _v?: number,
+}
+
+export type NewProduct = Omit<Product, "_id">;
+
+export interface CartItem extends Product {
+  productId: string,
 }
