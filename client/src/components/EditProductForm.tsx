@@ -9,17 +9,16 @@ interface EditProductFormProps {
 
 const EditProductForm = ({ product, onToggleEdit, onEdit }: EditProductFormProps) => {
   const [title, setTitle] = useState(product.title);
-  const [price, setPrice] = useState(product.price);
-  const [quantity, setQuantity] = useState(product.quantity);
+  const [price, setPrice] = useState(String(product.price));
+  const [quantity, setQuantity] = useState(String(product.quantity));
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const updatedProduct = { _id: product._id, title, price, quantity }
+    const updatedProduct = { _id: product._id, title, price: Number(price), quantity: Number(quantity) }
     onEdit(updatedProduct);
     onToggleEdit();
   }
 
-  // ! can't delete and then readd a decimal point, once NaN is shown can't add a number
   return (
     <div className="edit-form">
       <h3>Edit Product</h3>
@@ -30,11 +29,11 @@ const EditProductForm = ({ product, onToggleEdit, onEdit }: EditProductFormProps
         </div>
         <div className="input-group">
           <label htmlFor="product-price">Price</label>
-          <input type="text" id="product-price" value={price} min="0" step="0.01" onChange={(e) => setPrice(+e.target.value)}></input>
+          <input type="number" id="product-price" value={price} min="0" step="0.01" onChange={(e) => setPrice(e.target.value)}></input>
         </div>
         <div className="input-group">
           <label htmlFor="product-quantity">Quantity</label>
-          <input type="text" id="product-quantity" value={quantity} min="0" onChange={(e) => setQuantity(+e.target.value)}></input>
+          <input type="number" id="product-quantity" value={quantity} min="0" onChange={(e) => setQuantity(e.target.value)}></input>
         </div>
         <div className="actions form-actions">
           <button type="submit">Update</button>

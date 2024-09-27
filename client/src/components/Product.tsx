@@ -16,12 +16,11 @@ const Product = ({ _id, title, price, quantity, onEdit, onDelete, onAddToCart }:
     setShowEditForm(!showEditForm);
   }
 
-  // TODO: extract product details into separate component?
   return (
     <li className="product">
       <div className="product-details">
         <h3>{title}</h3>
-        <p className="price">${price}</p>
+        <p className="price">${price.toFixed(2)}</p>
         <p className="quantity">{quantity} left in stock</p>
         <div className="actions product-actions">
           <button className="add-to-cart" disabled={quantity === 0} onClick={() => onAddToCart(_id)}>Add to Cart</button>

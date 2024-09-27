@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import { ZodError } from "zod";
+
 import AddProductForm from "./components/AddProductForm";
 import ShoppingCart from "./components/ShoppingCart";
 import ProductListing from "./components/ProductListing";
+import Error from "./components/Error";
 import { Product, NewProduct, CartItem } from "./types";
 import { 
   getProducts, 
@@ -16,16 +20,35 @@ import {
 const App = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const data = await getProducts();
-      setProducts(data);
+      try {
+        const data = await getProducts();
+        setProducts(data);
+      } catch (error) {
+        if (error instanceof ZodError) {
+          console.log("zod error");
+        }
+
+        setError(true);
+        console.error(error);
+      }
     }
 
     const fetchCartItems = async () => {
-      const data = await getCartItems();
-      setCartItems(data);
+      try {
+        const data = await getCartItems();
+        setCartItems(data);
+      } catch (error) {
+        if (error instanceof ZodError) {
+          console.log("zod error");
+        }
+
+        setError(true);
+        console.error(error);
+      }
     }
 
     try {
@@ -49,7 +72,6 @@ const App = () => {
     }
   }
 
-  // ! update both cart and product list?
   const handleEdit = async (product: Product) => {
     try {
       const updatedProduct = await editProduct(product._id, {title: product.title, price: product.price, quantity: product.quantity});
@@ -128,14 +150,20 @@ const App = () => {
     }
   }
 
+  if (error) {
+    return <Error />;
+  }
+
   return (
-    <div id='app'>
-      <ShoppingCart cartItems={cartItems} onCheckout={handleCheckout}/>
-      <main>
-        <ProductListing products={products} onEdit={handleEdit} onDelete={handleDelete} onAddToCart={handleAddToCart} />
-        <AddProductForm onAddProduct={handleAddProduct}/>
-      </main>
-    </div>
+    <ErrorBoundary fallback={<Error />}>
+      <div id='app'>
+        <ShoppingCart cartItems={cartItems} onCheckout={handleCheckout}/>
+        <main>
+          <ProductListing products={products} onEdit={handleEdit} onDelete={handleDelete} onAddToCart={handleAddToCart} />
+          <AddProductForm onAddProduct={handleAddProduct}/>
+        </main>
+      </div>
+    </ErrorBoundary>
   )
 }
 

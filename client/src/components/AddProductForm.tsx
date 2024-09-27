@@ -7,23 +7,21 @@ interface AddProductFormProps {
 
 const AddProductForm = ({ onAddProduct }: AddProductFormProps) => {
   const [title, setTitle] = useState('');
-  const [price, setPrice] = useState(0);
-  const [quantity, setQuantity] = useState(0);
+  const [price, setPrice] = useState('');
+  const [quantity, setQuantity] = useState('');
 
   const reset = () => {
     setTitle('');
-    setPrice(0);
-    setQuantity(0);
+    setPrice('');
+    setQuantity('');
   }
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const newProduct = { title, price, quantity };
+    const newProduct = { title, price: Number(price), quantity: Number(quantity) };
     onAddProduct(newProduct, reset);
   }
 
-  // TODO: extract form into ProductForm component?
-  // ! price and quantity will display initial 0 that can't be deleted somehow
   return (
     <div className="add-form">
         <form action="" onSubmit={handleSubmit}>
@@ -33,11 +31,11 @@ const AddProductForm = ({ onAddProduct }: AddProductFormProps) => {
           </div>
           <div className="input-group">
             <label htmlFor="product-price">Price:</label>
-            <input type="number" id="product-price" name="product-price" min="0" step="0.01" required value={price} onChange={(e) => setPrice(+e.target.value)}/>
+            <input type="number" id="product-price" name="product-price" min="0" step="0.01" required value={price} onChange={(e) => setPrice(e.target.value)}/>
           </div>
           <div className="input-group">
             <label htmlFor="product-quantity">Quantity:</label>
-            <input type="number" id="product-quantity" name="product-quantity" min="0" required value={quantity} onChange={(e) => setQuantity(+e.target.value)}/>
+            <input type="number" id="product-quantity" name="product-quantity" min="0" required value={quantity} onChange={(e) => setQuantity(e.target.value)}/>
           </div>
           <div className="actions form-actions">
             <button type="submit">Add</button>
